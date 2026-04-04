@@ -1,0 +1,57 @@
+# Due to how Astro handles type inference with this structure,
+# we need to prefix all configuration keys with an underscore.
+
+[_.site]
+baseUrl = "http://8332.dev"
+
+[_.globalMeta]
+title = "Zaggonaut"
+description = "Retro-Inspired Theme & Built for Astro"
+longDescription = "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro."
+cardImage = "https://8332.dev/pixel-art.webp"
+keywords = ["web development", "design", "technology"]
+
+[_.blogMeta]
+title = "Zaggonaut Blog"
+description = "Practical wisdom, unfiltered thoughts, and hot takes."
+longDescription = "Web development, tech trends, and the occasional programming mishap."
+cardImage = "https://8332.dev/pixel-art.webp"
+keywords = ["web development", "design", "technology"]
+
+[_.projectMeta]
+title = "Zaggonaut Projects"
+description = "A list of my web development projects and developer tools."
+longDescription = "All of my projects, including both frontend and full-stack applications."
+cardImage = "https://8332.dev/pixel-art.webp"
+keywords = ["web development", "design", "technology"]
+
+[_.notFoundMeta]
+title = "Zaggonaut 404"
+description = "The page you are looking for does not exist."
+longDescription = "The page you are looking for does not exist. Maybe it never existed. Spooky."
+cardImage = "https://8332.dev/pixel-art.webp"
+
+[_.hero]
+title = "Angus Cheng (Vu Long Trinh)"
+subtitle = "Second-year student at Vietnamese-German University."
+image = "http://8332.dev/pixel-art.webp"
+ctaText = "View Projects"
+ctaUrl = "/projects"
+
+[_.personal]
+name = "Angus Cheng (Long Vu Trinh)"
+githubProfile = "https://github.com/"
+twitterProfile = "https://twitter.com/"
+linkedinProfile = "https://linkedin.com/"
+
+[_.texts]
+articlesName = "Articles"
+projectsName = "Projects"
+viewAll = "View All"
+noArticles = "No articles found."
+noProjects = "No projects found."
+
+[_.menu]
+home = "/"
+projects = "/projects"
+blog = "/blog"
