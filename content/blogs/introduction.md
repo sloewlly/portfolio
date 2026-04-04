@@ -3,7 +3,7 @@ title: "Hello, world!"
 slug: introduction
 description: A brief introduction.
 longDescription: Hello, I'm Angus!.
-cardImage: "https://8332.dev/pixel-art.webp"
+cardImage: "https://sloewlly.github.io/pixel-art.webp"
 tags: ["about me", "introduction"]
 readTime: 1
 featured: true
