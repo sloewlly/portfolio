@@ -52,6 +52,6 @@ noArticles = "No articles found."
 noProjects = "No projects found."
 
 [_.menu]
-home = "/"
-projects = "/projects"
-blog = "/blog"
+home = "/portfolio"
+projects = "/portfolio/projects"
+blog = "/portfolio/blog"
