@@ -3,7 +3,7 @@ title: "Hello, world!"
 slug: introduction
 description: A brief introduction.
 longDescription: Hello, I'm Angus!.
-cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"
+cardImage: "https://sloewlly.github.io/pixel-art.webp"
 tags: ["about me", "introduction"]
 readTime: 1
 featured: true
@@ -22,7 +22,5 @@ Here is a quick look at what you might find as I build out this site:
 * **Learning Logs:** Notes and progress updates on subjects I'm actively studying (like working on my math skills!).
 * **Projects:** Deep dives into what I'm building.
 * **Random Musings:** Whatever happens to be on my mind.
-
-![My Avatar](https://8332.dev/pixel-art.webp)
 
 Thanks for stopping by, and stay tuned for more actual content soon!

@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   // Your original GitHub Pages deployment settings
   site: 'https://sloewlly.github.io',
-  base: '/portfolio',
+  base: '/',
 
   // Your new Tailwind CSS v4 configuration
   vite: {
