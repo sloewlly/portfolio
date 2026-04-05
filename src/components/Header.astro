@@ -58,47 +58,41 @@ const { data: config } = await getConfigurationCollection();
 </header>
 
 <script>
-  function initHeaderLogic() {
-    // Added IDs to the HTML elements above to ensure precise selection
-    const button = document.getElementById("nav-toggle-btn") as HTMLButtonElement | null;
-    const nav = document.getElementById("main-nav") as HTMLElement | null;
+  function initNav() {
+    const button = document.querySelector("button");
+    const nav = document.querySelector("nav");
     
-    if (button && nav) {
-      // 1. Check LocalStorage for the saved menu state
-      let isOpen = localStorage.getItem("navOpen") === "true";
+    // Always reset to closed when a new page loads
+    let isOpen = false;
 
-      function updateNavState() {
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
-        if (isMobile) {
-          nav!.style.transform = isOpen ? "translateY(0)" : "translateY(-100%)";
-        } else {
-          nav!.style.transform = "translateY(0)";
-          // We intentionally do not reset 'isOpen' here so it remembers the state if resizing back down
-        }
+    function updateNavState() {
+      if (!nav) return;
+      const isMobile = window.matchMedia("(max-width: 640px)").matches;
+      if (isMobile) {
+        nav.style.transform = isOpen ? "translateY(0)" : "translateY(-100%)";
+      } else {
+        nav.style.transform = "translateY(0)";
+        isOpen = false;
       }
+    }
 
-      // 2. Update logic to write to LocalStorage
-      function toggleNav() {
-        isOpen = !isOpen;
-        localStorage.setItem("navOpen", String(isOpen));
-        updateNavState();
-      }
-
-      // 3. Use onclick to prevent duplicate event listeners triggering multiple times on page swaps
-      button.onclick = toggleNav;
-      
-      // Ensure resize listener is fresh
-      window.removeEventListener("resize", updateNavState);
-      window.addEventListener("resize", updateNavState);
-
-      // Trigger visual update on load
+    function toggleNav() {
+      isOpen = !isOpen;
       updateNavState();
     }
+
+    if (button) {
+      // Re-attach the click event to the newly rendered button
+      button.onclick = toggleNav;
+    }
+
+    window.removeEventListener("resize", updateNavState);
+    window.addEventListener("resize", updateNavState);
+
+    // Run once immediately to set the correct visual state
+    updateNavState();
   }
 
-  // Initialize on first load
-  document.addEventListener("DOMContentLoaded", initHeaderLogic);
-  
-  // Re-initialize and maintain state when navigating between pages via Astro View Transitions
-  document.addEventListener("astro:page-load", initHeaderLogic);
+  // This ensures the script runs on the first load AND every time Astro swaps the page
+  document.addEventListener("astro:page-load", initNav);
 </script>
