@@ -8,7 +8,15 @@ export type Props = {
 
 const { url, external, class: className } = Astro.props;
 
-const finalHref = external 
+// 1. Auto-detect external links
+const isExternal = 
+  external || 
+  url.startsWith('http://') || 
+  url.startsWith('https://') || 
+  url.startsWith('mailto:');
+
+// 2. Apply BASE_URL only if it's genuinely internal
+const finalHref = isExternal 
   ? url 
   : `${import.meta.env.BASE_URL}${url}`;
 ---
@@ -19,12 +27,12 @@ const finalHref = external
     "zag-offset underline font-medium flex items-center focus:outline-2 focus:outline-offset-2 focus:outline-zag-dark dark:focus:outline-zag-light",
     className,
   ]}
-  target={external ? "_blank" : "_self"}
+  target={isExternal ? "_blank" : "_self"}
   aria-label={Astro.props["aria-label"]}
 >
   <slot />
   {
-    external && (
+    isExternal && (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6"
