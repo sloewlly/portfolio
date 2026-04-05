@@ -6,7 +6,7 @@ longDescription: This article breaks down the vulnerabilities and step-by-step s
 cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"
 tags: ["capture the flag", "cybersecurity", "picoctf", "web-exploitation"]
 readTime: 30
-featured: false
+featured: true
 timestamp: 2026-04-01T01:00:00+00:00
 ---
 
