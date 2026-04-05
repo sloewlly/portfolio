@@ -10,6 +10,16 @@ const year = date.getFullYear();
 ---
 
 <footer class="mt-16 mb-8">
+  <Section class="mb-8">
+    <div class="w-full h-32 sm:h-48 md:h-64 overflow-hidden rounded-xl shadow-md">
+      <img
+        src="/portfolio/home/banner.gif"
+        alt="footer-banner"
+        class="w-full h-full object-cover zag-transition hover:scale-105 duration-500 grayscale"
+      />
+    </div>
+  </Section>
+
   <Section class="mb-4">
     <div
       class="zag-border-b zag-transition pb-4 flex flex-col sm:flex-row sm:flex-nowrap gap-8 sm:items-center"
@@ -36,7 +46,6 @@ const year = date.getFullYear();
             fill="currentColor"
             d="m10 7l-2 4h3v6H5v-6l2-4zm8 0l-2 4h3v6h-6v-6l2-4z"></path>
         </svg>
-        <!-- Remove the quote paragraph if you don't want quotes in the footer -->
         <p id="quote" class="zag-text zag-transition"></p>
       </div>
       <div class="flex flex-row sm:flex-col gap-4">
