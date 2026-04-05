@@ -10,13 +10,13 @@ featured: true
 timestamp: 2026-01-01T01:00:00+00:00
 ---
 
-# Hello, world! 👋
+# Xin chào! 👋
 
 Welcome to my little corner of the internet. If you're reading this, the site is officially live!
 
 ## Who am I?
 
-**Hello, I'm Angus!** This space is going to serve as a digital garden where I can document my journey, track my progress, and share things I find interesting. 
+**Hello, I'm Angus (Long)!** This space is going to serve as a digital garden where I can document my journey, track my progress, and share things I find interesting. 
 
 Here is a quick look at what you might find as I build out this site:
 * **Learning Logs:** Notes and progress updates on subjects I'm actively studying (like working on my math skills!).

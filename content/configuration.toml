@@ -5,28 +5,28 @@
 baseUrl = "https://sloewlly.github.io/"
 
 [_.globalMeta]
-title = "Zaggonaut"
+title = "Angus's basement"
 description = "Retro-Inspired Theme & Built for Astro"
 longDescription = "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro."
 cardImage = "https://sloewlly.github.io/portfolio/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.blogMeta]
-title = "Zaggonaut Blog"
+title = "Angus's blog"
 description = "Practical wisdom, unfiltered thoughts, and hot takes."
 longDescription = "Web development, tech trends, and the occasional programming mishap."
 cardImage = "https://sloewlly.github.io/portfolio/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.projectMeta]
-title = "Zaggonaut Projects"
+title = "Angus's projects"
 description = "A list of my web development projects and developer tools."
 longDescription = "All of my projects, including both frontend and full-stack applications."
 cardImage = "https://sloewlly.github.io/portfolio/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.notFoundMeta]
-title = "Zaggonaut 404"
+title = "Can't find Angus's! 404"
 description = "The page you are looking for does not exist."
 longDescription = "The page you are looking for does not exist. Maybe it never existed. Spooky."
 cardImage = "https://sloewlly.github.io/portfolio/pixel-art.webp"
