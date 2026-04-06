@@ -1,0 +1,37 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  id?: string;
+  class?: string;
+  title?: string;
+}
+
+const { src, alt, id = "audio-toggle", class: className = "", title = "" } = Astro.props;
+---
+
+<gif-control id={id} class={`block relative overflow-hidden transition-all duration-300 ${className}`} title={title}>
+  <img src={src} alt={alt} class="w-full h-full object-cover" />
+</gif-control>
+
+<script>
+  class GifControl extends HTMLElement {
+    connectedCallback() {
+      // Expose methods to your external scripts (e.g., Footer.astro) to control the visual state
+      (this as any).playGif = () => {
+        // Removes the grayscale filter, returning it to full color
+        this.classList.remove("grayscale");
+      };
+
+      (this as any).pauseGif = () => {
+        // Adds the grayscale filter while the GIF continues animating
+        this.classList.add("grayscale");
+      };
+    }
+  }
+
+  // Register the custom element
+  if (!customElements.get("gif-control")) {
+    customElements.define("gif-control", GifControl);
+  }
+</script>

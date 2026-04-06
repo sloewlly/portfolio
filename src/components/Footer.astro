@@ -2,6 +2,7 @@
 import { getConfigurationCollection } from "../lib/utils";
 import Anchor from "./common/Anchor.astro";
 import Section from "./common/Section.astro";
+import GifControl from "../components/GifControl.astro";
 
 const { data: config } = await getConfigurationCollection();
 
@@ -10,11 +11,17 @@ const year = date.getFullYear();
 ---
 
 <footer class="mt-16 mb-8">
-  <audio id="bg-audio" src="/portfolio/home/background.mp3" loop transition:persist="bg-audio"></audio>
+  <div transition:persist="footer-audio-player">
+    <audio id="bg-audio-1" src="/portfolio/home/background_1.mp3"></audio>
+    <audio id="bg-audio-2" src="/portfolio/home/background_2.mp3"></audio>
+    <audio id="bg-audio-3" src="/portfolio/home/background_3.mp3"></audio>
+    <audio id="bg-audio-4" src="/portfolio/home/background_4.mp3"></audio>
+    <audio id="bg-audio-5" src="/portfolio/home/background_5.mp3"></audio>
+  </div>
 
   <Section class="mb-8">
     <div class="w-full h-32 sm:h-48 md:h-64 overflow-hidden rounded-xl shadow-md">
-      <img
+      <GifControl
         id="audio-toggle"
         src="/portfolio/home/banner.gif" 
         alt="footer-banner"
@@ -25,9 +32,7 @@ const year = date.getFullYear();
   </Section>
 
   <Section class="mb-4">
-    <div
-      class="zag-border-b zag-transition pb-4 flex flex-col sm:flex-row sm:flex-nowrap gap-8 sm:items-center"
-    >
+    <div class="zag-border-b zag-transition pb-4 flex flex-col sm:flex-row sm:flex-nowrap gap-8 sm:items-center">
       <ul class="flex flex-col gap-2">
         {
           Object.entries(config.menu).map((i) => (
@@ -38,17 +43,9 @@ const year = date.getFullYear();
         }
       </ul>
       <div class="flex flex-start items-start gap-4 w-full">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          class="zag-fill zag-transition w-8 h-8 min-h-8 min-w-8 max-h-8 max-w-8 -translate-y-2"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="zag-fill zag-transition w-8 h-8 min-h-8 min-w-8 max-h-8 max-w-8 -translate-y-2">
           <title>Quote</title>
-          <path
-            fill="currentColor"
-            d="m10 7l-2 4h3v6H5v-6l2-4zm8 0l-2 4h3v6h-6v-6l2-4z"></path>
+          <path fill="currentColor" d="m10 7l-2 4h3v6H5v-6l2-4zm8 0l-2 4h3v6h-6v-6l2-4z"></path>
         </svg>
         <p id="quote" class="zag-text zag-transition"></p>
       </div>
@@ -78,51 +75,183 @@ const year = date.getFullYear();
     </div>
   </Section>
   <p class="zag-text zag-transition text-center text-sm font-medium">
-    &copy; {year}
-    {config.personal.name}. All rights reserved.
+    &copy; {year} {config.personal.name}. All rights reserved.
   </p>
 </footer>
 
 <script>
   function initFooterLogic() {
-    const audio = document.getElementById("bg-audio") as HTMLAudioElement | null;
-    const audio_toggle = document.getElementById("audio-toggle") as HTMLImageElement | null;
+    const audio_toggle = document.getElementById("audio-toggle") as any;
+    if (!audio_toggle) return;
 
-    const animatedGif = "/portfolio/home/banner.gif";
-
-    if (audio && audio_toggle) {
-      const isAudioToggled = localStorage.getItem("AudioToggled") === "true";
-
-      if (isAudioToggled) {
-        audio.muted = false;
-        if (audio.paused) {
-          audio.play().catch(e => console.log("Audio play blocked by browser:", e));
-        }
-        audio_toggle.classList.remove("grayscale");
-        audio_toggle.src = animatedGif;
-      } else {
-        audio.muted = true;
-        audio.pause();
-        audio_toggle.classList.add("grayscale");
-        audio_toggle.src = animatedGif;
-      }
-
-      audio_toggle.onclick = () => {
-        if (audio.muted || audio.paused) {
-          audio.muted = false;
-          audio.play().catch(e => console.log("Audio play failed:", e));
-          audio_toggle.classList.remove("grayscale");
-          audio_toggle.src = animatedGif;
-          localStorage.setItem("AudioToggled", "true");
-        } else {
-          audio.muted = true;
-          audio.pause();
-          audio_toggle.classList.add("grayscale");
-          audio_toggle.src = animatedGif;
-          localStorage.setItem("AudioToggled", "false");
-        }
+    // Use a global window object to store state across Astro navigations
+    const w = window as any;
+    if (!w.audioState) {
+      w.audioState = {
+        currentId: null,
+        fadeInterval: null,
+        timeout: null
       };
     }
+
+    const audioIds = ["bg-audio-1", "bg-audio-2", "bg-audio-3", "bg-audio-4", "bg-audio-5"];
+    const getAudio = (id: string) => document.getElementById(id) as HTMLAudioElement | null;
+
+    const updateUI = (isPlaying: boolean) => {
+      // Wait a tiny fraction of a second to ensure the custom element is fully mounted
+      setTimeout(() => {
+        if (isPlaying && typeof audio_toggle.playGif === 'function') {
+          audio_toggle.playGif();
+        } else if (!isPlaying && typeof audio_toggle.pauseGif === 'function') {
+          audio_toggle.pauseGif();
+        }
+      }, 50);
+    };
+
+    // Smooth volume fade system
+    const fadeAudio = (audio: HTMLAudioElement, targetVol: number, duration: number, onComplete?: () => void) => {
+      if (w.audioState.fadeInterval) clearInterval(w.audioState.fadeInterval);
+      const steps = 20;
+      const stepTime = duration / steps;
+      const volStep = (targetVol - audio.volume) / steps;
+
+      w.audioState.fadeInterval = setInterval(() => {
+        let newVol = audio.volume + volStep;
+        if ((volStep > 0 && newVol >= targetVol) || (volStep < 0 && newVol <= targetVol)) {
+          audio.volume = Math.max(0, Math.min(1, targetVol));
+          clearInterval(w.audioState.fadeInterval);
+          if (onComplete) onComplete();
+        } else {
+          audio.volume = Math.max(0, Math.min(1, newVol));
+        }
+      }, stepTime);
+    };
+
+    // Setup tracks and attach event listeners only once
+    audioIds.forEach(id => {
+      const a = getAudio(id);
+      if (a && !a.dataset.initialized) {
+        a.dataset.initialized = "true";
+        
+        // Check time continually to trigger a fade out 2 seconds before the end
+        a.addEventListener("timeupdate", () => {
+          if (a.duration && a.duration - a.currentTime <= 2 && a.dataset.fadingOut !== "true") {
+            a.dataset.fadingOut = "true";
+            fadeAudio(a, 0, 2000); // 2 second fade out
+          }
+        });
+
+        // When song finishes, wait 2 to 3 seconds, then pick another random song
+        a.addEventListener("ended", () => {
+          if (localStorage.getItem("AudioToggled") === "true") {
+            const breakMs = Math.floor(Math.random() * 1000) + 2000; // 2000ms - 3000ms break
+            w.audioState.timeout = setTimeout(() => {
+              playRandomTrack();
+            }, breakMs);
+          }
+        });
+      }
+    });
+
+    const playTrack = (id: string) => {
+      const audio = getAudio(id);
+      if (!audio) return;
+
+      // Stop previous track if one was playing
+      if (w.audioState.currentId && w.audioState.currentId !== id) {
+        const prevAudio = getAudio(w.audioState.currentId);
+        if (prevAudio) {
+          prevAudio.pause();
+          prevAudio.currentTime = 0;
+        }
+      }
+
+      w.audioState.currentId = id;
+      audio.dataset.fadingOut = "false"; // Reset fadeout flag
+      audio.volume = 0; // Start at volume 0 for smooth fade-in
+      audio.muted = false;
+      
+      audio.play().then(() => {
+        updateUI(true);
+        fadeAudio(audio, 1, 2000); // 2 second fade-in
+      }).catch(e => {
+        console.log("Audio play blocked by browser:", e);
+        updateUI(false);
+        localStorage.setItem("AudioToggled", "false");
+      });
+    };
+
+    const playRandomTrack = () => {
+      let nextId;
+      // Ensure we don't pick the exact same track twice in a row
+      do {
+        nextId = audioIds[Math.floor(Math.random() * audioIds.length)];
+      } while (nextId === w.audioState.currentId && audioIds.length > 1);
+      playTrack(nextId);
+    };
+
+    const stopAllTracks = () => {
+      if (w.audioState.timeout) clearTimeout(w.audioState.timeout);
+      if (w.audioState.currentId) {
+        const audio = getAudio(w.audioState.currentId);
+        if (audio) {
+          fadeAudio(audio, 0, 1000, () => {
+            audio.pause();
+          });
+        }
+      }
+    };
+
+    const isAudioToggled = localStorage.getItem("AudioToggled") === "true";
+
+    // Handle initial state on page navigation
+    if (isAudioToggled) {
+      if (!w.audioState.currentId) {
+        playRandomTrack(); // First time starting up
+      } else {
+        const currAudio = getAudio(w.audioState.currentId);
+        if (currAudio && currAudio.paused) {
+          currAudio.play().then(() => {
+            if (!currAudio.paused) updateUI(true);
+          }).catch(() => {
+            updateUI(false);
+            localStorage.setItem("AudioToggled", "false");
+          });
+        } else {
+          updateUI(true);
+        }
+      }
+    } else {
+      stopAllTracks();
+      updateUI(false);
+    }
+
+    // Toggle click handler
+    audio_toggle.onclick = () => {
+      if (localStorage.getItem("AudioToggled") !== "true") {
+        localStorage.setItem("AudioToggled", "true");
+        if (w.audioState.currentId) {
+            const audio = getAudio(w.audioState.currentId);
+            if (audio) {
+                audio.dataset.fadingOut = "false";
+                audio.muted = false;
+                audio.volume = 0;
+                audio.play().then(() => {
+                    updateUI(true);
+                    fadeAudio(audio, 1, 1500);
+                });
+            } else {
+                playRandomTrack();
+            }
+        } else {
+            playRandomTrack();
+        }
+      } else {
+        localStorage.setItem("AudioToggled", "false");
+        stopAllTracks();
+        updateUI(false);
+      }
+    };
 
     const quotes = [
       { quote: "The purple elephant dances only when the moon whispers forgotten lullabies." },
@@ -154,7 +283,5 @@ const year = date.getFullYear();
     }
   }
 
-  document.addEventListener("DOMContentLoaded", initFooterLogic);
-  
   document.addEventListener("astro:page-load", initFooterLogic);
 </script>
