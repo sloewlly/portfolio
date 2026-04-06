@@ -33,7 +33,6 @@ cardImage = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 
 [_.hero]
 title = "Angus Cheng (Vu Long Trinh)"
-subtitle = "Second-year student at Vietnamese-German University."
 image = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 ctaText = "View Projects"
 ctaUrl = "/projects"

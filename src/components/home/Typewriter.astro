@@ -1,0 +1,83 @@
+---
+interface Props {
+  messages: string[];
+  writeSpeed?: number;
+  deleteSpeed?: number;
+  waitWritten?: number;
+}
+
+const {
+  messages,
+  writeSpeed = 100,
+  deleteSpeed = 50,
+  waitWritten = 1500
+} = Astro.props;
+---
+
+<type-writer
+  data-messages={JSON.stringify(messages)}
+  data-write-speed={writeSpeed}
+  data-delete-speed={deleteSpeed}
+  data-wait-written={waitWritten}
+>
+  <span class="text-display"></span><span class="cursor">|</span>
+</type-writer>
+
+<script>
+  class TypeWriter extends HTMLElement {
+    connectedCallback() {
+      const messages = JSON.parse(this.dataset.messages || '[]');
+      const writeSpeed = parseInt(this.dataset.writeSpeed || '100', 10);
+      const deleteSpeed = parseInt(this.dataset.deleteSpeed || '50', 10);
+      const waitWritten = parseInt(this.dataset.waitWritten || '1500', 10);
+
+      const textDisplay = this.querySelector('.text-display');
+      if (!textDisplay) return;
+      
+      let messageIndex = 0;
+      let currentText = '';
+      let isDeleting = false;
+
+      const type = () => {
+        const currentMessage = messages[messageIndex];
+
+        if (isDeleting) {
+          currentText = currentMessage.substring(0, currentText.length - 1);
+        } else {
+          currentText = currentMessage.substring(0, currentText.length + 1);
+        }
+
+        textDisplay.textContent = currentText;
+
+        let typeSpeed = isDeleting ? deleteSpeed : writeSpeed;
+
+        if (!isDeleting && currentText === currentMessage) {
+          typeSpeed = waitWritten;
+          isDeleting = true;
+        } else if (isDeleting && currentText === '') {
+          isDeleting = false;
+          messageIndex = (messageIndex + 1) % messages.length;
+          typeSpeed = writeSpeed; 
+        }
+
+        setTimeout(type, typeSpeed);
+      };
+
+      setTimeout(type, writeSpeed);
+    }
+  }
+
+  customElements.define('type-writer', TypeWriter);
+</script>
+
+<style>
+  .cursor {
+    font-weight: bold;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>

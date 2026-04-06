@@ -1,5 +1,6 @@
 ---
 import { getConfigurationCollection } from "../../lib/utils";
+import Typewriter from '../home/Typewriter.astro';
 
 const { data: config } = await getConfigurationCollection();
 ---
@@ -19,7 +20,11 @@ const { data: config } = await getConfigurationCollection();
     <h2
       class="text-center text-xl sm:text-2xl font-mono font-medium sm:text-left"
     >
-      <p set:html={config.hero.subtitle}/>
+      <Typewriter
+        messages={["Second-year student at Vietnamese-German University.","An average Capture the Flag enthusiast.","Silly guy :3!"]}
+        writeSpeed={40}
+        deleteSpeed={30}
+        waitWritten={3000}/>
     </h2>
   </div>
 </div>
