@@ -62,6 +62,14 @@
     --zag-transition-timing-function: ease-in-out;
   }
 
+  *, *::before, *::after {
+    @media (prefers-reduced-motion: no-preference) {
+      transition-property: background-color, border-color, color, fill, stroke;
+      transition-duration: var(--zag-transition-duration);
+      transition-timing-function: var(--zag-transition-timing-function);
+    }
+  }
+
   ::selection {
     background-color: var(--color-zag-accent-light);
     color: var(--color-zag-dark-muted);

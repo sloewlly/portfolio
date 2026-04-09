@@ -5,40 +5,40 @@
 baseUrl = "https://sloewlly.github.io/"
 
 [_.globalMeta]
-title = "Angus's basement"
+title = "Andy's basement"
 description = "Retro-Inspired Theme & Built for Astro"
 longDescription = "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro."
 cardImage = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.blogMeta]
-title = "Angus's blog"
+title = "Andy's blog"
 description = "Practical wisdom, unfiltered thoughts, and hot takes."
 longDescription = "Web development, tech trends, and the occasional programming mishap."
 cardImage = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.projectMeta]
-title = "Angus's projects"
+title = "Andy's projects"
 description = "A list of my web development projects and developer tools."
 longDescription = "All of my projects, including both frontend and full-stack applications."
 cardImage = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 keywords = ["web development", "design", "technology"]
 
 [_.notFoundMeta]
-title = "Can't find Angus's! 404"
+title = "Can't find Andy's! 404"
 description = "The page you are looking for does not exist."
 longDescription = "The page you are looking for does not exist. Maybe it never existed. Spooky."
 cardImage = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 
 [_.hero]
-title = "Angus Cheng (Vu Long Trinh)"
+title = "Andy (Vu Long)"
 image = "https://sloewlly.github.io/portfolio/home/pixel-art.webp"
 ctaText = "View Projects"
 ctaUrl = "/projects"
 
 [_.personal]
-name = "Angus Cheng (Long Vu Trinh)"
+name = "Andy"
 githubProfile = "https://github.com/"
 twitterProfile = "https://twitter.com/"
 linkedinProfile = "https://linkedin.com/"

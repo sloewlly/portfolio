@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Section from "../../components/common/Section.astro";
 import ProjectSnippet from "../../components/ProjectSnippet.astro";
 import Layout from "../../layouts/Layout.astro";
+import Typewriter from '../../components/home/Typewriter.astro';
 import { getConfigurationCollection } from "../../lib/utils";
 
 const projects = (await getCollection("project")).sort(
@@ -45,8 +46,15 @@ const { data: config } = await getConfigurationCollection();
     <link rel="canonical" href={`${config.site.baseUrl}/projects`} />
   </Fragment>
   <Section class="py-4 my-8">
-    <div class="flex items-center gap-4 pt-8 pb-16">
+    <div class="flex flex-col items-start gap-4 pt-8 pb-16">
       <h1 class="font-display text-3xl sm:text-4xl leading-loose">{config.texts.projectsName}</h1>
+        <h2 class="text-xl sm:text-xl font-mono font-medium">
+          <Typewriter
+          messages={["Things that I've done!","I hope somebody will find them useful!"]}
+          writeSpeed={40}
+          deleteSpeed={30}
+          waitWritten={5000}/>
+          </h2>
     </div>
     <ul>
       {
