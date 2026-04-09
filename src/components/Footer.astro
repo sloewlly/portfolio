@@ -17,6 +17,9 @@ const year = date.getFullYear();
     <audio id="bg-audio-3" src="/portfolio/home/background_3.mp3"></audio>
     <audio id="bg-audio-4" src="/portfolio/home/background_4.mp3"></audio>
     <audio id="bg-audio-5" src="/portfolio/home/background_5.mp3"></audio>
+    <audio id="bg-audio-6" src="/portfolio/home/background_6.mp3"></audio>
+    <audio id="bg-audio-7" src="/portfolio/home/background_7.mp3"></audio>
+    <audio id="bg-audio-8" src="/portfolio/home/background_8.mp3"></audio>
   </div>
 
   <Section class="mb-8">
@@ -84,7 +87,6 @@ const year = date.getFullYear();
     const audio_toggle = document.getElementById("audio-toggle") as any;
     if (!audio_toggle) return;
 
-    // Use a global window object to store state across Astro navigations
     const w = window as any;
     if (!w.audioState) {
       w.audioState = {
@@ -94,11 +96,10 @@ const year = date.getFullYear();
       };
     }
 
-    const audioIds = ["bg-audio-1", "bg-audio-2", "bg-audio-3", "bg-audio-4", "bg-audio-5"];
+    const audioIds = ["bg-audio-1", "bg-audio-2", "bg-audio-3", "bg-audio-4", "bg-audio-5", "bg-audio-6", "bg-audio-7", "bg-audio-8"];
     const getAudio = (id: string) => document.getElementById(id) as HTMLAudioElement | null;
 
     const updateUI = (isPlaying: boolean) => {
-      // Wait a tiny fraction of a second to ensure the custom element is fully mounted
       setTimeout(() => {
         if (isPlaying && typeof audio_toggle.playGif === 'function') {
           audio_toggle.playGif();
@@ -108,43 +109,49 @@ const year = date.getFullYear();
       }, 50);
     };
 
-    // Smooth volume fade system
     const fadeAudio = (audio: HTMLAudioElement, targetVol: number, duration: number, onComplete?: () => void) => {
       if (w.audioState.fadeInterval) clearInterval(w.audioState.fadeInterval);
-      const steps = 20;
+      
+      const steps = 50;
       const stepTime = duration / steps;
-      const volStep = (targetVol - audio.volume) / steps;
+      
+      let currentVol = audio.volume;
+      const volStep = (targetVol - currentVol) / steps;
+
+      if (Math.abs(targetVol - currentVol) < 0.01) {
+        audio.volume = Math.max(0, Math.min(1, targetVol));
+        if (onComplete) onComplete();
+        return;
+      }
 
       w.audioState.fadeInterval = setInterval(() => {
-        let newVol = audio.volume + volStep;
-        if ((volStep > 0 && newVol >= targetVol) || (volStep < 0 && newVol <= targetVol)) {
+        currentVol += volStep;
+        
+        if ((volStep > 0 && currentVol >= targetVol) || (volStep < 0 && currentVol <= targetVol)) {
           audio.volume = Math.max(0, Math.min(1, targetVol));
           clearInterval(w.audioState.fadeInterval);
           if (onComplete) onComplete();
         } else {
-          audio.volume = Math.max(0, Math.min(1, newVol));
+          audio.volume = Math.max(0, Math.min(1, currentVol));
         }
       }, stepTime);
     };
 
-    // Setup tracks and attach event listeners only once
     audioIds.forEach(id => {
       const a = getAudio(id);
       if (a && !a.dataset.initialized) {
         a.dataset.initialized = "true";
         
-        // Check time continually to trigger a fade out 2 seconds before the end
         a.addEventListener("timeupdate", () => {
           if (a.duration && a.duration - a.currentTime <= 2 && a.dataset.fadingOut !== "true") {
             a.dataset.fadingOut = "true";
-            fadeAudio(a, 0, 2000); // 2 second fade out
+            fadeAudio(a, 0, 4000);
           }
         });
 
-        // When song finishes, wait 2 to 3 seconds, then pick another random song
         a.addEventListener("ended", () => {
           if (localStorage.getItem("AudioToggled") === "true") {
-            const breakMs = Math.floor(Math.random() * 1000) + 2000; // 2000ms - 3000ms break
+            const breakMs = Math.floor(Math.random() * 1000) + 4000;
             w.audioState.timeout = setTimeout(() => {
               playRandomTrack();
             }, breakMs);
@@ -157,7 +164,7 @@ const year = date.getFullYear();
       const audio = getAudio(id);
       if (!audio) return;
 
-      // Stop previous track if one was playing
+
       if (w.audioState.currentId && w.audioState.currentId !== id) {
         const prevAudio = getAudio(w.audioState.currentId);
         if (prevAudio) {
@@ -167,13 +174,13 @@ const year = date.getFullYear();
       }
 
       w.audioState.currentId = id;
-      audio.dataset.fadingOut = "false"; // Reset fadeout flag
-      audio.volume = 0; // Start at volume 0 for smooth fade-in
+      audio.dataset.fadingOut = "false";
+      audio.volume = 0;
       audio.muted = false;
       
       audio.play().then(() => {
         updateUI(true);
-        fadeAudio(audio, 1, 2000); // 2 second fade-in
+        fadeAudio(audio, 1, 4000);
       }).catch(e => {
         console.log("Audio play blocked by browser:", e);
         updateUI(false);
@@ -183,7 +190,6 @@ const year = date.getFullYear();
 
     const playRandomTrack = () => {
       let nextId;
-      // Ensure we don't pick the exact same track twice in a row
       do {
         nextId = audioIds[Math.floor(Math.random() * audioIds.length)];
       } while (nextId === w.audioState.currentId && audioIds.length > 1);
@@ -204,15 +210,16 @@ const year = date.getFullYear();
 
     const isAudioToggled = localStorage.getItem("AudioToggled") === "true";
 
-    // Handle initial state on page navigation
     if (isAudioToggled) {
       if (!w.audioState.currentId) {
-        playRandomTrack(); // First time starting up
+        playRandomTrack();
       } else {
         const currAudio = getAudio(w.audioState.currentId);
         if (currAudio && currAudio.paused) {
+          currAudio.volume = 0;
           currAudio.play().then(() => {
             if (!currAudio.paused) updateUI(true);
+            fadeAudio(currAudio, 1, 1500);
           }).catch(() => {
             updateUI(false);
             localStorage.setItem("AudioToggled", "false");
@@ -226,7 +233,6 @@ const year = date.getFullYear();
       updateUI(false);
     }
 
-    // Toggle click handler
     audio_toggle.onclick = () => {
       if (localStorage.getItem("AudioToggled") !== "true") {
         localStorage.setItem("AudioToggled", "true");
