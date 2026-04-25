@@ -6,7 +6,7 @@ longDescription: Hello, I'm Angus!.
 cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"
 tags: ["about me", "introduction"]
 readTime: 1
-featured: true
+featured: false
 timestamp: 2026-01-01T01:00:00+00:00
 ---
 
