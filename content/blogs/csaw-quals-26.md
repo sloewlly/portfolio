@@ -5,7 +5,7 @@ description: Detailed solutions and methodologies for the CSAW CTF 2026 web expl
 longDescription: This article breaks down the vulnerabilities and step-by-step solutions for the CSAW CTF 2026 web challenges to help you better understand web application security.
 cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"
 tags: ["capture the flag", "cybersecurity", "csaw", "web-exploitation"]
-readTime: 30
+readTime: 10
 featured: true
 timestamp: 2026-09-25T01:00:00+00:00
 ---
@@ -132,3 +132,115 @@ The core takeaway? Never blindly trust cryptographic material supplied by the cl
   csaw{str4ta_sk1pped_th3_p1n}
   ```
 </details>
+
+## Golf Heist
+
+<details>
+  <summary><strong>Click to reveal flag</strong></summary>
+  
+  ```text
+  csaw{el3gant_sw1ng_n3ver_c4ught}
+  ```
+</details>
+
+## Juggler
+
+(Note: I tackled this challenge on my local environment after the CTF concluded, so I don't have the official remote flag, but the exploitation methodology remains exactly the same!)
+
+This challenge is a classic callback to one of web exploitation's most infamous quirks: PHP type juggling. It perfectly illustrates why mixing loosely-typed languages with format-preserving input (like JSON) can lead to catastrophic authentication bypasses.
+
+The premise is straightforward. We are given the source code for a web application and need to access a restricted admin panel. Let's start by looking at how the application initializes its SQLite database:
+
+```php
+require_once __DIR__ . "/db.php";
+
+$pdo->exec(
+    "CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT \"user\"
+    )"
+);
+```
+
+When a user registers, they are automatically assigned the default "user" role.
+
+Digging further into the source, I examined how the application determines who gets access to the admin panel. The roles are defined in a configuration file:
+
+```ini
+[Roles]
+; Admin roles
+admin_roles[] = "placeholder_admin_role1"
+admin_roles[] = "placeholder_admin_role2"
+
+; Normal user roles
+user_roles[] = "user"
+user_roles[] = "guest"
+```
+
+And the authorization check protecting the admin panel looks like this:
+
+```php
+if (!isset($_SESSION["role"]) || !in_array($_SESSION["role"], $adminRoles)) {
+    header("Location: index.php");
+    exit();
+}
+```
+
+At first glance, it seems impossible to bypass. We don't know the actual names of the admin roles on the remote server (they are placeholders in the provided source), so we can't simply guess them.
+
+However, looking at the user profile update endpoint `/dashboard.php`, I noticed it accepts JSON input and dynamically updates the database:
+
+```php
+if (in_array($jsonKey,$dbColumns, true)){
+    $stmt =$pdo->prepare("UPDATE users SET `$jsonKey` = ? WHERE id = ?");
+    $stmt->execute([$jsonValue,$_SESSION['user_id']]);
+}
+```
+
+Notice a critical difference between the two in_array() checks?
+
+When checking if the provided JSON key is a valid column name, the developers explicitly used the third parameter true: in_array($jsonKey, $dbColumns, true). This enforces strict comparison (===), meaning both the value and the data type must match.
+
+But in the authorization check earlier, the developers omitted the third parameter: in_array($_SESSION["role"], $adminRoles). Without the true flag, in_array falls back to loose comparison (==).
+
+This is where JSON becomes our weapon. Unlike standard URL-encoded form data (application/x-www-form-urlencoded), which parses everything as strings, json_decode() respects data types. If we send a boolean in JSON, PHP treats it as a boolean.
+
+In PHP, when you compare a boolean true to any non-empty string using loose comparison, it evaluates to true.
+Therefore: true == "placeholder_admin_role1" -> true.
+
+We don't need to guess the secret admin role string; we just need to change our role to the boolean value true!
+
+I fired up Burp Suite, logged into my standard user account, and intercepted a request to the profile update endpoint. I then modified the JSON payload to update the role key, passing it a literal boolean true (without quotes) instead of a string:
+
+```http
+POST /dashboard.php HTTP/1.1
+Host: 0.0.0.0:8080
+Content-Length: 109
+Accept-Language: en-US,en;q=0.9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+Content-Type: application/json
+Accept: */*
+Origin: http://0.0.0.0:8080
+Referer: http://0.0.0.0:8080/dashboard.php
+Accept-Encoding: gzip, deflate, br
+Cookie: PHPSESSID=d81c867ba4ca11f7ffc789c78e85dd3c
+Connection: keep-alive
+
+{
+  "username":"attacker",
+  "password":"123",
+  "role":true,
+  "csrf_token":"cb38c368d642249fe09e8719c7f5353f778b8a7022488635e3a84327e1675fe5"
+}
+```
+
+The server parses this JSON, successfully updates our session's role to true, and updates the database.
+
+Now, when we navigate to the protected admin page, PHP executes:
+in_array(true, ["placeholder_admin_role1", "placeholder_admin_role2"])
+
+Because of type juggling, the check succeeds on the very first iteration, believing our true role matches the admin role string. The application waves us right through the authorization gate, granting us full admin access!
+
+The core takeaway? Always use strict type comparisons (=== or in_array(..., ..., true)) in PHP, especially when handling dynamic data formats like JSON where user input can arbitrarily control data types.
