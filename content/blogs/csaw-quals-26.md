@@ -239,7 +239,10 @@ Connection: keep-alive
 The server parses this JSON, successfully updates our session's role to true, and updates the database.
 
 Now, when we navigate to the protected admin page, PHP executes:
+
+```
 in_array(true, ["placeholder_admin_role1", "placeholder_admin_role2"])
+```
 
 Because of type juggling, the check succeeds on the very first iteration, believing our true role matches the admin role string. The application waves us right through the authorization gate, granting us full admin access!
 
