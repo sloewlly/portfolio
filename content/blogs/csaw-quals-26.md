@@ -145,7 +145,7 @@ The core takeaway? Never blindly trust cryptographic material supplied by the cl
 
 ## Juggler
 
-(Note: I tackled this challenge on my local environment after the CTF concluded, so I don't have the official remote flag, but the exploitation methodology remains exactly the same!)
+(Note: I tackled this challenge on my local environment, but the exploitation methodology remains exactly the same!)
 
 This challenge is a classic callback to one of web exploitation's most infamous quirks: PHP type juggling. It perfectly illustrates why mixing loosely-typed languages with format-preserving input (like JSON) can lead to catastrophic authentication bypasses.
 
@@ -247,3 +247,11 @@ in_array(true, ["placeholder_admin_role1", "placeholder_admin_role2"])
 Because of type juggling, the check succeeds on the very first iteration, believing our true role matches the admin role string. The application waves us right through the authorization gate, granting us full admin access!
 
 The core takeaway? Always use strict type comparisons (=== or in_array(..., ..., true)) in PHP, especially when handling dynamic data formats like JSON where user input can arbitrarily control data types.
+
+<details>
+  <summary><strong>Click to reveal flag</strong></summary>
+  
+  ```text
+  csaw{tw0_f0r_0n3_2gc9w2hz}
+  ```
+</details>
