@@ -7,10 +7,10 @@ export type Props = {
 	description: string;
 	url: string;
 	duration?: string;
-	timestamp?: Date;
+  tags?: string[];
 };
 
-const { title, description, url, duration, timestamp } = Astro.props;
+const { title, description, url, duration, tags } = Astro.props;
 ---
 
 <div class="relative zag-text zag-transition flex flex-col gap-3 mb-8 hover-zag-dotted-grid">
@@ -23,7 +23,15 @@ const { title, description, url, duration, timestamp } = Astro.props;
   <div
     class="zag-muted zag-transition flex justify-between items-center"
   >
-    {timestamp ? <p>{processArticleDate(timestamp)}</p> : null}
+    <div class="flex flex-row flex-wrap gap-2">
+    {
+      tags.map((tag) => (
+        <span class="-zag-text -zag-bg zag-transition px-2 py-1 text-sm font-semibold">
+          {tag}
+        </span>
+      ))
+    }
+    </div>
     {duration ? <p>{duration}</p> : null}
   </div>
 </div>

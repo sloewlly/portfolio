@@ -1,6 +1,6 @@
 ---
 title: "Hello, world!"
-slug: introduction
+slug: 26-01-01-introduction
 description: A brief introduction.
 longDescription: Hello, I'm Angus!.
 cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"

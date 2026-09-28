@@ -1,11 +1,11 @@
 ---
 title: "CSAW CTF '26 Qualifications - web exploitation write-ups!"
-slug: csaw-quals-26
+slug: 26-09-25-csaw-quals-26
 description: Detailed solutions and methodologies for the CSAW CTF 2026 web exploitation challenges.
 longDescription: This article breaks down the vulnerabilities and step-by-step solutions for the CSAW CTF 2026 web challenges to help you better understand web application security.
 cardImage: "https://sloewlly.github.io/portfolio/pixel-art.webp"
 tags: ["capture the flag", "cybersecurity", "csaw", "web-exploitation"]
-readTime: 10
+readTime: 5
 featured: true
 timestamp: 2026-09-25T01:00:00+00:00
 ---
